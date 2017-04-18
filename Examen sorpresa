@@ -1,0 +1,48 @@
+######## EJERCICIO BJAR ACCIONES DE ICA, NETFLIX, TELEVISA Y TV AZTECA DIARIO, PRECIO DE CIERRE 2016
+######AJUSTAR 4 MODELOS DE SUAVIZADO EXPONENCIAL SIMPLE (ALPHA= .2, .4, .6, .8)
+#### GRAFICAR EN UNA SOLA GRAFICA Y CON LA GRAFICA DECIDIR CUAL DE LOS 4 ES EL MEJOR AJUSTE QUE TIENE 
+##########UNA VEZ QUE HAYAN DECIDIDO GRAFICAMENTE EL MEJOR AJUSTE 
+######APLICAR LA EVALUACION DE LOS AJUSTES Y UTILIZAR LAS MEDIDAS MAE Y RMSE EXTRAYENDOLAS
+##### DE TAL FORMA QUE CREEN UN VECTOR QUE COMPARE ESTAS MEDIDAS Y ESTE VECTOR INDIQUE QUE ALPHA ES LA MEJOR
+#####IDENTIFICAR TENDENCIA, ESTACIONARIEDAD Y CICLOS EN LA SERIE DE TIEMPO E INTERPRESTAR ESTOS COMPONENTES
+
+ica<-read.csv(file.choose())
+icas<-ts(ica,start = 2016,frequency = 242)
+require (forecast)
+mod1<-ses(icas,alpha = 0.2,initial="simple",h=8)
+mod2<-ses(icas,alpha = 0.4,initial="simple",h=8)
+mod3<-ses(icas,alpha = 0.6,initial="simple",h=8)
+mod4<-ses(icas,alpha = 0.8,initial="simple",h=8)
+x11()
+plot(mod1,ylab ="Precios",xlab = "Dias",main="ICA",type="o")
+lines(mod1$fitted,col="yellow",type = "o")
+lines(mod2$fitted,col="red",type = "o")
+lines(mod3$fitted,col="green",type = "o")
+lines(mod4$fitted,col="pink",type = "o")
+legend("topleft",lty=1,col=c(1,"yellow","red","green","pink"),c("datos",expression(alpha==0.2),expression(alpha==0.4),expression(alpha==0.6),expression(alpha==0.8)),pch=11)
+#Graficamente el mejor pronostico es con un alpha de 0.6
+
+
+pr<-accuracy(mod1)
+se<-accuracy(mod2)
+te<-accuracy(mod3)
+cu<-accuracy(mod4)
+
+mae<- c(pr[,3],se[,3],te[,3],cu[,3])
+rmse<-c(pr[,2],se[,2],te[,2],cu[,2])
+
+vec<-data.frame(rmse,mae)
+
+v<-min(vec[,1])
+if(v==vec[1,1]) { print("Con un alpha de 0.2 este es el mejor pronostico para rmse")}
+if(v==vec[2,1]) { print("Con un alpha de 0.4 este es el mejor pronostico para rmse")}
+if(v==vec[3,1]) { print("Con un alpha de 0.6 este es el mejor pronostico para rmse")}
+if(v==vec[4,1]) { print("Con un alpha de 0.8 este es el mejor pronostico para rmse")}
+
+ve<-min(vec[,2])  
+if(ve==vec[1,2]) { print("Con un alpha de 0.2 este es el mejor pronostico para mae")}
+if(ve==vec[2,2]) { print("Con un alpha de 0.4 este es el mejor pronostico para mae")}
+if(ve==vec[3,2]) { print("Con un alpha de 0.6 este es el mejor pronostico para mae")}
+if(ve==vec[4,2]) { print("Con un alpha de 0.8 este es el mejor pronostico para mae")}
+
+#Existe estacionariedad en la grafica, pero no parece presentar tendencia
