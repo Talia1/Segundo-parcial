@@ -1,0 +1,40 @@
+serie1<-read.csv(file.choose())
+serie2<-read.csv(file.choose())
+se1<-ts(serie1,frequency = 4,start = 2000)
+se2<-ts(serie2,frequency = 4,start = 2000)
+co1<-window(se1,start=c(2000,1),end=c(2003,4))
+co2<-window(se2,start=c(2000,1),end=c(2003,4))
+
+require(fpp)
+
+mod1<-holt(co1,alpha=0.8,beta=0.2,initial="simple",h=5)
+mod2<-holt(co1,alpha=0.8,beta=0.2,initial="simple",exponential=TRUE,h=5)
+mod3<-holt(co1,damped=TRUE)
+mod4<-holt(co1,exponential=T,damped=T)
+
+mode1<-holt(co2,alpha=0.8,beta=0.2,initial="simple",h=5)
+mode2<-holt(co2,alpha=0.8,beta=0.2,initial="simple",exponential=TRUE,h=5)
+mode3<-holt(co2,damped=TRUE)
+mode4<-holt(co2,exponential=T,damped=T)
+
+cor1<-window(se1,start=c(2004,1),end=c(2004,4))
+cor2<-window(se2,start=c(2004,1),end=c(2004,4))
+
+x11()
+plot(mod1,main="Serie 1")
+lines(cor1,col=1)
+lines(mod1$mean,col="blue")
+lines(mod2$mean,col="red")
+lines(mod3$mean,col="green")
+lines(mod4$mean,col="orange")
+legend("topleft",lty=2,col=c(1,"blue","red","green","orange"),legend=c("Serie cortada","Lineal Holt","Exponencial Holt","Aditivo amortiguado","Multiplicativa amortiguado"),pch=64)
+
+x11()
+plot(mode1,main="Serie 2")
+lines(cor2,col=1)
+lines(mode1$mean,col="blue")
+lines(mode2$mean,col="red")
+lines(mode3$mean,col="pink")
+lines(mode4$mean,col="orange")
+legend("topleft",lty=2,col=c(1,"blue","red","yelow","orange"),legend=c("Serie cortada","Lineal Holt","Exponencial Holt","Aditivo amortiguado","Multiplicativa amortiguado"),pch=64)
+
