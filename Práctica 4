@@ -1,0 +1,9 @@
+aa<-sample(300:900,252)
+ta<-ts(aa,frequency = 252,start = 2016)
+acf(ta)
+plot(ta)
+
+ica<-read.csv(file.choose())
+icas<-ts(ica,start = 2016,frequency = 242)
+acf(icas)
+plot(icas)
