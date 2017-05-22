@@ -1,0 +1,72 @@
+cemex<-read.csv("C:\\Users\\Sala-D3\\Documents\\CEMEXCPO.MX (1).csv")
+cemexst<-ts(cemex[,5],frequency = 252,start = 2016)
+bimbo<-read.csv("C:\\Users\\Sala-D3\\Documents\\BIMBOA.MX (1).csv")
+bimbost<-ts(bimbo[,5],frequency = 252,start = 2016)
+##### 1) Revisar si nuestra serie es estacionaria
+######## se aplica la prueba de raiz unitaria a traves de la funcion 
+######## adf.test y esperamos que el p-value sea menor a .05
+require (foreign)
+require (fpp)
+adf.test(bimbost)
+dbimts<-diff(bimbost)
+### Aplicamos la primera dieferenciacion con la funcion diff
+## debido a que la serie original no es estacionaria
+adf.test(dbimts)
+#### que nuestra serie en su primera diferenciacion se convierte en estacionaria
+acf(dbimts)# esto para encontrar el valor q
+## en este determinamos el numero de q que se asocia con los modelos
+### de promedios moviles
+##Para dterminar el valor de p que se relaciona con los modelos
+#3 autorregresivos se utiliza la fn pacf()
+pacf(dbimts)####segunel correlograma de pacf el valor de p es 1
+##3 por lo que se propone un modelo ARIMA (1,1,2)
+modbim<-Arima(bimbost,order = c(1,1,2))
+modbim
+modbim1<-Arima(bimbost,order = c(0,1,0))
+modbim1
+## de estols dos modelos es mejor el primero sle menor AICc para el criterio de AIKAIKE
+modres<-residuals(modbim)
+Box.test(modres,lag = 12,type = "Ljung-Box") #P-value grande sugiere
+#que si hay ruido blanco en los Residuales y asi pasa la prueba 
+mod1<-forecast(modbim,h=12)
+x11()
+plot(forecast(modbim,h=12),include = 18)#include te da los ultimos 18 datos de tu serie de tiempo
+mod1
+summary(mod1)
+
+auto.arima(bimbost)
+mod1res<-residuals(modbim1)
+Box.test(mod1res,lag = 12,type = "Ljung-Box")
+mod2<-forecast(modbim1,h=12)
+x11()
+plot(forecast(modbim1,h=5),include = 18)#include te da los ultimos 18 datos de tu serie de tiempo
+mod2
+
+###################   CEMEX    ##################
+
+cemex<-read.csv("C:\\Users\\Sala-D3\\Documents\\CEMEXCPO.MX (1).csv")
+cemexst<-ts(cemex[,5],frequency = 252,start = 2016)
+adf.test(cemexst)
+dcets<-diff(cemexst)
+adf.test(dcets)
+acf(dcets)
+pacf(dcets)
+modcem<-Arima(cemexst,order = c(2,1,2))
+modcem
+moderesi<-residuals(modcem)
+Box.test(moderesi,lag = 12,type = "Ljung-Box")
+mod3<-forecast(modcem,h=12)
+x11()
+plot(forecast(modcem,h=12),include = 18)#include te da los ultimos 18 datos de tu serie de tiempo
+mod3
+summary(mod1)
+
+auto.arima(cemexst)
+modcem1<-Arima(cemexst,order = c(0,1,0))
+modcem1
+mode1resi<-residuals(modcem1)
+Box.test(mode1resi,lag = 12,type = "Ljung-Box")
+mod4<-forecast(modcem1,h=12)
+x11()
+plot(forecast(modcem1,h=5),include = 18)#include te da los ultimos 18 datos de tu serie de tiempo
+mod4
