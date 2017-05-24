@@ -1,0 +1,40 @@
+amxl<-read.csv("C:\\Users\\Sala-D3\\Downloads\\AMX.csv")
+amxlts<-ts(amxl[,5],frequency = 252,start = 2016)
+amxlts
+require (forecast)
+require(fpp)
+zz<-Arima(amxlts,order = c(1,0,0))
+zz
+#c de la formula es el intercept
+#yt=13.2425+.9864(yt-1)+et
+#En este caso fi1=.9864
+ZZ2<-Arima(amxlts,order = c(2,0,0))
+ZZ2
+# Yt=13.2634+1.0601(Yt-1)-.0755(Yt-2)+et 
+#en este caso fi1=1.0601 y fi2=-.0755
+
+### Ahora bien si tenemos de promedios moviles MA(q) se puede expresar
+# Yt=c+teta1(et-1)+teta2(et-2)+....+ tetap(et-p)+et
+## a traves de un modelo Arima se expresa de esta forma
+yy<-Arima(amxlts,order = c(0,0,1))## MA(1)
+yy
+##Yt=12.7409+.8605(et-1)+et..... en esta caso teta1=.8605
+#Para modelo promedios moviles de orden 2 es:
+yy2<-Arima(amxlts,order = c(0,0,2))#MA(2)
+yy2
+#Yt=12.7481+1.339(et-1)+.7423(et-2)+et
+#en este caso C=12.7481, teta1=1.339, teta2=.7423
+
+### para modelos arima con diferenciacion####
+
+##para un modelo arima con p=2,d=1,q=2 EXPRESA:
+yy3<-Arima(amxlts,order = c(2,1,2))
+yy3
+#Con este modelo expresamos
+#Y´t=.8710(Y´t-1)-.3364(Y´t-2)-.8362(et-1)+.1378(et-2)+et
+
+lmt<-read.csv("C:\\Users\\Sala-D3\\Downloads\\LMT.csv")
+lmtts<-ts(lmt[,5],frequency = 252,start = 2016)
+aa<-Arima(lmtts,order = c(4,2,1))
+aa
+#Y´t=.0474(y´t-1)+.0817(y´t-2)+.0877(y´t-3)-.1234(y´t-4)-1.000(et-1)+et
